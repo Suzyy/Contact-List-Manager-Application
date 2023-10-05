@@ -33,7 +33,7 @@ public class ContactController {
                 return new ResponseEntity<>(contactList, HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(contactList, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -45,18 +45,19 @@ public class ContactController {
 
         if (contactData.isPresent()) {
             return new ResponseEntity<>(contactData.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-
     }
 
     @PostMapping("/addContact")
     public ResponseEntity<Contact> addContact(@RequestBody Contact contact) {
-        Contact contactObj = contactRepo.save(contact);
-
-        return new ResponseEntity<>(contactObj, HttpStatus.OK);
+        try {
+            Contact contactObj = contactRepo.save(contact);
+            return new ResponseEntity<>(contactObj, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/updateContactById/{id}")
