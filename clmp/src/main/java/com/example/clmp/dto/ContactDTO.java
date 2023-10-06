@@ -1,6 +1,5 @@
 package com.example.clmp.dto;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.validation.constraints.Email;
