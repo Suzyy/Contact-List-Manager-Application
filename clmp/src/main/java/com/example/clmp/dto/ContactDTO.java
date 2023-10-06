@@ -1,6 +1,7 @@
 package com.example.clmp.dto;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -23,5 +24,5 @@ public class ContactDTO {
 
     private String address;
 
-    private LocalDateTime dateCreated;
+    private Date dateCreated;
 }
