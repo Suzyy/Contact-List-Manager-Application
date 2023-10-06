@@ -1,10 +1,14 @@
 package com.example.clmp.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import lombok.*;
+
+@Setter
+@Getter
 public class ContactDTO {
     private Long id;
 
@@ -19,5 +23,5 @@ public class ContactDTO {
 
     private String address;
 
-    private Date dateCreated;
+    private LocalDateTime dateCreated;
 }
