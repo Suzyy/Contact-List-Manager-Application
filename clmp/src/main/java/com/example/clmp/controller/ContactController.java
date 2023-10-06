@@ -1,9 +1,7 @@
 package com.example.clmp.controller;
 
-import com.example.clmp.repo.ContactRepo;
 import com.example.clmp.service.ContactService;
 import com.example.clmp.dto.ContactDTO;
-import com.example.clmp.model.Contact;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,7 +65,7 @@ public class ContactController {
         if (updatedContactDTOData.isPresent()){
             return new ResponseEntity<>(updatedContactDTOData.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<ContactDTO>(HttpStatus.NOT_FOUND)
+            return new ResponseEntity<ContactDTO>(HttpStatus.NOT_FOUND);
         }
     }
 
