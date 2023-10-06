@@ -2,12 +2,14 @@ package com.example.clmp.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -39,5 +41,8 @@ public class Contact {
     @CreatedDate
     @Column(name="date_created", nullable = false, updatable = false)
     private Date dateCreated;
+
+    @OneToOne(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Notes notes;
     
 }
