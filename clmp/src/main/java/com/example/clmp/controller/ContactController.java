@@ -2,10 +2,13 @@ package com.example.clmp.controller;
 
 import com.example.clmp.service.ContactService;
 import com.example.clmp.dto.ContactDTO;
+import com.example.clmp.exception.ContactNotFoundException;
+import com.example.clmp.exception.ContactNotValidException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.web.server.ServerHttpSecurity.HttpsRedirectSpec;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,12 +42,13 @@ public class ContactController {
 
     @GetMapping("/getContactById/{id}")
     public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
-        Optional<ContactDTO> contactDTOData = contactService.getContactById(id);
-
-        if (contactDTOData.isPresent()) {
+        try {
+            Optional<ContactDTO> contactDTOData = contactService.getContactById(id);
             return new ResponseEntity<>(contactDTOData.get(), HttpStatus.OK);
-        } else {
+        } catch (ContactNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -53,25 +57,34 @@ public class ContactController {
         try {
             ContactDTO contactObj = contactService.addContact(contactDTO);
             return new ResponseEntity<>(contactObj, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (ContactNotValidException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/updateContactById/{id}")
     public ResponseEntity<ContactDTO> updateContactById(@PathVariable Long id, @RequestBody ContactDTO newContactDTO) {
-        Optional<ContactDTO> updatedContactDTOData = contactService.updateContactById(id, newContactDTO);
-
-        if (updatedContactDTOData.isPresent()){
+        try {
+            Optional<ContactDTO> updatedContactDTOData = contactService.updateContactById(id, newContactDTO);
             return new ResponseEntity<>(updatedContactDTOData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<ContactDTO>(HttpStatus.NOT_FOUND);
+        } catch (ContactNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/deleteContactById/{id}")
     public ResponseEntity<HttpStatus> deleteContactById(@PathVariable Long id) {
-        contactService.deleteContactById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            contactService.deleteContactById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (ContactNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
