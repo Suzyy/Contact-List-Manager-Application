@@ -1,6 +1,8 @@
 package com.example.clmp.controller;
 
 import com.example.clmp.repo.ContactRepo;
+import com.example.clmp.service.ContactService;
+import com.example.clmp.dto.ContactDTO;
 import com.example.clmp.model.Contact;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,39 +23,38 @@ import java.util.Optional;
 public class ContactController {
 
     @Autowired
-    private ContactRepo contactRepo;
+    private ContactService contactService;
 
     @GetMapping("/getAllContacts")
-    public ResponseEntity<List<Contact>> getAllContacts() {
+    public ResponseEntity<List<ContactDTO>> getAllContacts() {
         try {
-            List<Contact> contactList = new ArrayList<>();
-            contactRepo.findAll().forEach(contactList::add);
+            List<ContactDTO> contactDTOList = contactService.getAllContacts();
 
-            if (contactList.isEmpty()) {
-                return new ResponseEntity<>(contactList, HttpStatus.NO_CONTENT);
+            if (contactDTOList.isEmpty()) {
+                return new ResponseEntity<>(contactDTOList, HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(contactList, HttpStatus.OK);
+            return new ResponseEntity<>(contactDTOList, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/getContactById/{id}")
-    public ResponseEntity<Contact> getContactById(@PathVariable Long id) {
-        Optional<Contact> contactData = contactRepo.findById(id);
+    public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
+        Optional<ContactDTO> contactDTOData = contactService.getContactById(id);
 
-        if (contactData.isPresent()) {
-            return new ResponseEntity<>(contactData.get(), HttpStatus.OK);
+        if (contactDTOData.isPresent()) {
+            return new ResponseEntity<>(contactDTOData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/addContact")
-    public ResponseEntity<Contact> addContact(@RequestBody Contact contact) {
+    public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO contactDTO) {
         try {
-            Contact contactObj = contactRepo.save(contact);
+            ContactDTO contactObj = contactService.addContact(contactDTO);
             return new ResponseEntity<>(contactObj, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,30 +62,19 @@ public class ContactController {
     }
 
     @PostMapping("/updateContactById/{id}")
-    public ResponseEntity<Contact> updateContactById(@PathVariable Long id, @RequestBody Contact newContactData) {
-        Optional<Contact> oldContactData = contactRepo.findById(id);
+    public ResponseEntity<ContactDTO> updateContactById(@PathVariable Long id, @RequestBody ContactDTO newContactDTO) {
+        Optional<ContactDTO> updatedContactDTOData = contactService.updateContactById(id, newContactDTO);
 
-        if (oldContactData.isPresent()) {
-            Contact updatedContactData = oldContactData.get();
-            updatedContactData.setFirstName(newContactData.getFirstName());
-            updatedContactData.setLastName(newContactData.getLastName());
-            updatedContactData.setEmail(newContactData.getEmail());
-            updatedContactData.setAddress(newContactData.getAddress());
-            updatedContactData.setDateCreated(newContactData.getDateCreated());
-
-            Contact contactObj = contactRepo.save(updatedContactData);
-            return new ResponseEntity<>(contactObj, HttpStatus.OK);
-
+        if (updatedContactDTOData.isPresent()){
+            return new ResponseEntity<>(updatedContactDTOData.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<ContactDTO>(HttpStatus.NOT_FOUND)
         }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/deleteContactById/{id}")
     public ResponseEntity<HttpStatus> deleteContactById(@PathVariable Long id) {
-        contactRepo.deleteById(id);
+        contactService.deleteContactById(id);
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
-    
 }
