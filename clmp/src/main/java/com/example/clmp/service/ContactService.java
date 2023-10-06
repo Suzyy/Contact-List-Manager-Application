@@ -11,6 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import com.example.clmp.repo.ContactRepo;
 import com.example.clmp.dto.ContactDTO;
 import com.example.clmp.model.Contact;
+import com.example.clmp.exception.ContactNotFoundException;
+import com.example.clmp.exception.ContactNotValidException;
 
 
 @Service
@@ -32,12 +34,15 @@ public class ContactService {
         if (contactData.isPresent()) {
             return Optional.of(convertToDTO(contactData.get()));
         } else {
-            return Optional.empty();
+            throw new ContactNotFoundException("Contact not found with ID: " + id);
         }
-     
     }
 
     public ContactDTO addContact(ContactDTO contactDTO) {
+        //Validation check: check if required fields are not null
+        if (contactDTO.getFirstName() == null || contactDTO.getLastName() == null || contactDTO.getEmail() == null) {
+            throw new ContactNotValidException("Contact data is not valid. First name, last name, and email are required.");
+        }
         Contact contact = convertToEntity(contactDTO);
         Contact savedContact = contactRepo.save(contact);
 
@@ -59,12 +64,20 @@ public class ContactService {
             Contact savedContact = contactRepo.save(updatedContactData);
             return Optional.of(convertToDTO(savedContact));
         } else {
-            return Optional.empty();
+            //exception where contact is not found with the id given: no contact to update
+            throw new ContactNotFoundException("Contact not found with ID: " + id);
         }
     }
 
     public void deleteContactById(Long id) {
-        contactRepo.deleteById(id);
+        Optional<Contact> contactData = contactRepo.findById(id);
+        
+        if (contactData.isPresent()) {
+            contactRepo.deleteById(id);
+        } else {
+            //exception where contact is not found with the id given: no contact to delete
+            throw new ContactNotFoundException("Contact not found with ID: " + id);
+        }
     }
 
     //Helper Function: Converting entity to DTO

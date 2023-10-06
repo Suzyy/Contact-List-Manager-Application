@@ -19,6 +19,7 @@ public class ContactDTO {
     private String lastName;
 
     @Email(message = "Invalid email address")
+    @NotBlank(message = "Last name is a required field")
     private String email;
 
     private String address;
