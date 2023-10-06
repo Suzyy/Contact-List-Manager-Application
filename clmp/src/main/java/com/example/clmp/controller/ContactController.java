@@ -1,6 +1,12 @@
 package com.example.clmp.controller;
 
 import com.example.clmp.service.ContactService;
+
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
+
 import com.example.clmp.dto.ContactDTO;
 import com.example.clmp.exception.ContactNotFoundException;
 import com.example.clmp.exception.ContactNotValidException;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +32,15 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
+
+    //Rate limiting. API should allow only 50 request in a minute
+    //This can be used in pricing plan for each API client
+    private final Bucket bucket;
+
+    public ContactController() {
+        Bandwidth limit = Bandwidth.classic(50, Refill.greedy(50, Duration.ofMinutes(1)));
+        this.bucket = Bucket4j.builder().addLimit(limit).build();
+    }
 
     @GetMapping("/getAllContacts")
     public ResponseEntity<List<ContactDTO>> getAllContacts() {
