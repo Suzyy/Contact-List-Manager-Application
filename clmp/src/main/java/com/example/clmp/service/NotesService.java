@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.example.clmp.repo.NotesRepo;
 import com.example.clmp.dto.NotesDTO;
-import com.example.clmp.model.Notes;
+import com.example.clmp.entity.Notes;
 import com.example.clmp.exception.NotesNotFoundException;
 import com.example.clmp.exception.NotesNotValidException;
 

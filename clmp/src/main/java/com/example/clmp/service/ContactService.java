@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.example.clmp.repo.ContactRepo;
 import com.example.clmp.dto.ContactDTO;
-import com.example.clmp.model.Contact;
+import com.example.clmp.entity.Contact;
 import com.example.clmp.exception.ContactNotFoundException;
 import com.example.clmp.exception.ContactNotValidException;
 

@@ -1,4 +1,4 @@
-package com.example.clmp.model;
+package com.example.clmp.entity;
 
 import java.util.Date;
 
