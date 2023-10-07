@@ -19,7 +19,7 @@ import lombok.*;
 
 
 @Entity
-@Table(name="Contact")
+@Table(name="Notes")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -33,9 +33,7 @@ public class Notes {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name="contact_id")
-    private Contact contact;
+    private Long contactId;
 
     private String noteText;
 

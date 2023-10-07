@@ -41,9 +41,4 @@ public class Contact {
     @CreatedDate
     @Column(name="date_created", nullable = false, updatable = false)
     private Date dateCreated;
-
-    //Ensuring that when Contact is deleted, Note is deleted. When Note is deleted, Contact is not deleted.
-    @OneToOne(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Notes notes;
-    
 }

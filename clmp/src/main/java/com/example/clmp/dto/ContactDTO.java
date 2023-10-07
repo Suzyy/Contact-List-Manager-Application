@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.*;
 
 @Setter
@@ -25,4 +28,16 @@ public class ContactDTO {
     private String address;
 
     private Date dateCreated;
+
+    @Override
+    public String toString() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            // Handle the exception, e.g., log it or return a default string
+            return "Error converting object to JSON string";
+        }
+    }
+
 }

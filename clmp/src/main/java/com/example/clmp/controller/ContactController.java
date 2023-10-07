@@ -71,6 +71,7 @@ public class ContactController {
 
     @PostMapping("/addContact")
     public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO contactDTO) {
+        System.out.println("Received request body: " + contactDTO.toString());
         try {
             ContactDTO contactObj = contactService.addContact(contactDTO);
             return new ResponseEntity<>(contactObj, HttpStatus.OK);
