@@ -1,10 +1,12 @@
 package com.example.clmp.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,7 @@ public class ContactServiceTest {
         //Calling contact service
         List<ContactDTO> contactDTOs = contactService.getAllContacts();
 
+        //Verifying contactDOTs contain expected contact info
         assertEquals(2, contactDTOs.size());
         assertEquals("Suzy", contactDTOs.get(0).getFirstName());
         assertEquals("Lee", contactDTOs.get(0).getLastName());
@@ -53,6 +56,23 @@ public class ContactServiceTest {
         assertEquals("Lee", contactDTOs.get(1).getLastName());
         assertEquals("jay@example.com", contactDTOs.get(1).getEmail());
         assertEquals("456 Yonge St", contactDTOs.get(1).getAddress());
+    }
+
+    @Test
+    public void testGetContactById_ContactFound() {
+
+        Contact mockContact = new Contact(1L, "Suzy", "Lee", "suzy@example.com", "123 Yonge St", null);
+
+        //Mocking findById() method in repo
+        when(contactRepo.findById(1L)).thenReturn(Optional.of(mockContact));
+
+        Optional<ContactDTO> contactDTO = contactService.getContactById(1L);
+
+        assertTrue(contactDTO.isPresent());
+        assertEquals("Suzy", contactDTO.orElse(null).getFirstName());
+        assertEquals("Lee", contactDTO.orElse(null).getLastName());
+        assertEquals("suzy@example.com", contactDTO.orElse(null).getEmail());
+        assertEquals("123 Yonge St", contactDTO.orElse(null).getAddress());
     }
 
 
