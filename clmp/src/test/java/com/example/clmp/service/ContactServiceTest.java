@@ -37,12 +37,13 @@ public class ContactServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    //getAllContact
     @Test
     public void testGetAllContact() {
         //Creating mock contacts
         List<Contact> mockContactList = new ArrayList<>();
-        mockContactList.add(new Contact(null, "Suzy", "Lee", "suzy@example.com", "123 Yonge St", null));
-        mockContactList.add(new Contact(null, "Jay", "Lee", "jay@example.com", "456 Yonge St", null));
+        mockContactList.add(new Contact(null, "Suzy", "Lee", "000-000-0000","suzy@example.com", "123 Yonge St", null));
+        mockContactList.add(new Contact(null, "Jay", "Lee", "111-111-1111","jay@example.com", "456 Yonge St", null));
 
         //Mocking findAll() method in repo
         when(contactRepo.findAll()).thenReturn(mockContactList);
@@ -54,18 +55,21 @@ public class ContactServiceTest {
         assertEquals(2, contactDTOs.size());
         assertEquals("Suzy", contactDTOs.get(0).getFirstName());
         assertEquals("Lee", contactDTOs.get(0).getLastName());
+        assertEquals("000-000-0000", contactDTOs.get(0).getPhoneNumber());
         assertEquals("suzy@example.com", contactDTOs.get(0).getEmail());
         assertEquals("123 Yonge St", contactDTOs.get(0).getAddress());
         assertEquals("Jay", contactDTOs.get(1).getFirstName());
         assertEquals("Lee", contactDTOs.get(1).getLastName());
+        assertEquals("111-111-1111", contactDTOs.get(1).getPhoneNumber());
         assertEquals("jay@example.com", contactDTOs.get(1).getEmail());
         assertEquals("456 Yonge St", contactDTOs.get(1).getAddress());
     }
 
+    //getContactById
     @Test
     public void testGetContactById_ContactFound() {
 
-        Contact mockContact = new Contact(1L, "Suzy", "Lee", "suzy@example.com", "123 Yonge St", null);
+        Contact mockContact = new Contact(1L, "Suzy", "Lee", "000-000-0000","suzy@example.com", "123 Yonge St", null);
 
         //Mocking findById() method in repo
         when(contactRepo.findById(1L)).thenReturn(Optional.of(mockContact));
@@ -88,12 +92,14 @@ public class ContactServiceTest {
         assertThrows(ContactNotFoundException.class, () -> contactService.getContactById(anyLong()));
     }
 
+    //addContact
     @Test
     public void testAddContact_DataValid() {
         
         ContactDTO mockContactDTO = new ContactDTO();
         mockContactDTO.setFirstName("Suzy");
         mockContactDTO.setLastName("Lee");
+        mockContactDTO.setPhoneNumber("000-000-0000");
         mockContactDTO.setEmail("suzy@example.com");
 
         //Mocking save() method in repo
@@ -109,6 +115,7 @@ public class ContactServiceTest {
         assertNotNull(savedContactDTO.getId());
         assertEquals("Suzy", savedContactDTO.getFirstName());
         assertEquals("Lee", savedContactDTO.getLastName());
+        assertEquals("000-000-0000", savedContactDTO.getPhoneNumber());
         assertEquals("suzy@example.com", savedContactDTO.getEmail());
     }
 
@@ -122,10 +129,11 @@ public class ContactServiceTest {
         assertThrows(ContactNotValidException.class, () -> contactService.addContact(mockContactDTO));
     }
 
+    //updateContactById
     @Test
     public void testUpdateContactById_ContactFound() {
 
-        Contact mockContact = new Contact(1L, "Suzy", "Lee", "suzy@example.com", "123 Yonge St", null);
+        Contact mockContact = new Contact(1L, "Suzy", "Lee", "000-000-0000","suzy@example.com", "123 Yonge St", null);
 
         when(contactRepo.findById(1L)).thenReturn(Optional.of(mockContact));
         when(contactRepo.save(any(Contact.class))).thenReturn(mockContact);
@@ -157,4 +165,7 @@ public class ContactServiceTest {
 
         assertThrows(ContactNotFoundException.class, () -> contactService.updateContactById(1L, newContactDTO));
     }
+
+
+
 }

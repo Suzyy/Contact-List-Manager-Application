@@ -40,7 +40,7 @@ public class ContactService {
 
     public ContactDTO addContact(ContactDTO contactDTO) {
         //Validation check: check if required fields are not null
-        if (contactDTO.getFirstName() == null || contactDTO.getLastName() == null || contactDTO.getEmail() == null) {
+        if (contactDTO.getFirstName() == null || contactDTO.getLastName() == null || contactDTO.getPhoneNumber() == null || contactDTO.getEmail() == null) {
             throw new ContactNotValidException("Contact data is not valid. First name, last name, and email are required.");
         }
         Contact contact = convertToEntity(contactDTO);
@@ -57,6 +57,7 @@ public class ContactService {
             Contact updatedContactData = oldContactData.get();
             updatedContactData.setFirstName(newContactData.getFirstName());
             updatedContactData.setLastName(newContactData.getLastName());
+            updatedContactData.setPhoneNumber(newContactData.getPhoneNumber());
             updatedContactData.setEmail(newContactData.getEmail());
             updatedContactData.setAddress(newContactData.getAddress());
             updatedContactData.setDateCreated(newContactData.getDateCreated());
@@ -87,6 +88,7 @@ public class ContactService {
         contactDTO.setId(contact.getId());
         contactDTO.setFirstName(contact.getFirstName());
         contactDTO.setLastName(contact.getLastName());
+        contactDTO.setPhoneNumber(contact.getPhoneNumber());
         contactDTO.setEmail(contact.getEmail());
         contactDTO.setAddress(contact.getAddress());
         contactDTO.setDateCreated(contact.getDateCreated());
@@ -100,6 +102,7 @@ public class ContactService {
         contact.setId(contactDTO.getId());
         contact.setFirstName(contactDTO.getFirstName());
         contact.setLastName(contactDTO.getLastName());
+        contact.setPhoneNumber(contactDTO.getPhoneNumber());
         contact.setEmail(contactDTO.getEmail());
         contact.setAddress(contactDTO.getAddress());
         contact.setDateCreated(contactDTO.getDateCreated());
