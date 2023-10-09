@@ -122,5 +122,39 @@ public class ContactServiceTest {
         assertThrows(ContactNotValidException.class, () -> contactService.addContact(mockContactDTO));
     }
 
+    @Test
+    public void testUpdateContactById_ContactFound() {
 
+        Contact mockContact = new Contact(1L, "Suzy", "Lee", "suzy@example.com", "123 Yonge St", null);
+
+        when(contactRepo.findById(1L)).thenReturn(Optional.of(mockContact));
+        when(contactRepo.save(any(Contact.class))).thenReturn(mockContact);
+
+        ContactDTO newContactDTO = new ContactDTO();
+        newContactDTO.setId(1L);
+        newContactDTO.setFirstName("Jay");
+        newContactDTO.setLastName("Lee");
+        newContactDTO.setEmail("jay@example.com");
+
+        Optional<ContactDTO> updateContact = contactService.updateContactById(1L, newContactDTO);
+
+        assertTrue(updateContact.isPresent());
+        assertEquals("Jay", updateContact.get().getFirstName());
+        assertEquals("Lee", updateContact.get().getLastName());
+        assertEquals("jay@example.com", updateContact.get().getEmail());
+    }
+
+    @Test
+    public void testUpdateContactById_ContactNotFound() {
+
+        when(contactRepo.findById(1L)).thenReturn(Optional.empty());
+
+        ContactDTO newContactDTO = new ContactDTO();
+        newContactDTO.setId(1L);
+        newContactDTO.setFirstName("Jay");
+        newContactDTO.setLastName("Lee");
+        newContactDTO.setEmail("jay@example.com");
+
+        assertThrows(ContactNotFoundException.class, () -> contactService.updateContactById(1L, newContactDTO));
+    }
 }
