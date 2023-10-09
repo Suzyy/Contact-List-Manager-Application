@@ -43,10 +43,7 @@ public class NotesServiceTest {
 
         Long notesId = 1L;
         Long contactId = 2L;
-        Notes mockNotes = new Notes();
-        mockNotes.setId(notesId);
-        mockNotes.setNoteText("This is a test note.");
-        mockNotes.setContactId(contactId);
+        Notes mockNotes = new Notes(notesId, contactId, "This is a test note.", null);
 
         when(notesRepo.findById(notesId)).thenReturn(Optional.of(mockNotes));
 
@@ -64,6 +61,7 @@ public class NotesServiceTest {
         assertThrows(NotesNotFoundException.class, () -> notesService.getNotesById(1L));
     }
 
+    //addNotes
     @Test
     public void testAddNotes_DataValid() {
 
@@ -96,6 +94,71 @@ public class NotesServiceTest {
         assertThrows(NotesNotValidException.class, () -> notesService.addNotes(notesDTO));
     }
 
+    //updateNotesById
+    @Test
+    public void testUpdateNotesById_NotesFound() {
+
+        Long notesId = 1L;
+        Long contactId = 2L;
+        Notes mockNotes = new Notes(notesId, contactId, "This is a test note.", null);
+
+        when(notesRepo.findById(notesId)).thenReturn(Optional.of(mockNotes));
+        when(notesRepo.save(any(Notes.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        //Only updating the notetext.
+        NotesDTO updatedNotesDTO = new NotesDTO();
+        updatedNotesDTO.setId(notesId);
+        updatedNotesDTO.setContactId(contactId);
+        updatedNotesDTO.setNoteText("This is an updated test note.");
+
+        Optional<NotesDTO> updatedNotes = notesService.updateNotesById(notesId, updatedNotesDTO);
+
+        assertTrue(updatedNotes.isPresent());
+        assertEquals("This is an updated test note.", updatedNotes.get().getNoteText());
+        //Checking if these fields are not updated as intended.
+        assertEquals(notesId, updatedNotes.get().getId());
+        assertEquals(contactId, updatedNotes.get().getContactId());
+    }
+
+    @Test
+    public void testUpdateNotesById_NotesNotFound() {
+
+        Long notesId = 1L;
+        Long contactId = 2L;
+
+        when(notesRepo.findById(notesId)).thenReturn(Optional.empty());
+
+        NotesDTO updatedNotesDTO = new NotesDTO();
+        updatedNotesDTO.setId(notesId);
+        updatedNotesDTO.setContactId(contactId);
+        updatedNotesDTO.setNoteText("This is an updated test note.");
+
+        assertThrows(NotesNotFoundException.class, () -> notesService.updateNotesById(notesId, updatedNotesDTO));
+    }
+
+    //deleteNotesById
+    @Test
+    public void testDeleteNotesById_NotesFound() {
+
+        Long notesId = 1L;
+
+        when(notesRepo.findById(notesId)).thenReturn(Optional.of(new Notes()));
+
+        notesService.deleteNotesById(notesId);
+
+        //Verifying that delete method in the repo was invoked
+        verify(notesRepo, times(1)).deleteById(notesId);
+    }
+
+    @Test
+    public void testDeleteNotesById_NotesNotFound() {
+
+        Long notesId = 1L;
+
+        when(notesRepo.findById(notesId)).thenReturn(Optional.empty());
+
+        assertThrows(NotesNotFoundException.class, () -> notesService.deleteNotesById(notesId));
+    }
 
 
 }

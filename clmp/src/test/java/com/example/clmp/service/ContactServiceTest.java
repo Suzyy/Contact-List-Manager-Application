@@ -177,7 +177,7 @@ public class ContactServiceTest {
 
         contactService.deleteContactById(1L);
 
-        //Verifying that delete method in the repo was invoced
+        //Verifying that delete method in the repo was invoked
         verify(contactRepo, times(1)).deleteById(1L);
     }
 
