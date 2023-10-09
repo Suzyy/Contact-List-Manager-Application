@@ -16,10 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.clmp.filter.JwtFilter;
-import com.example.clmp.repo.UserRepo;
 import com.example.clmp.service.CustomUserDetailsService;
 
-import org.springframework.security.core.userdetails.UserDetails;
 
 //enable h2 database console
 @Configuration

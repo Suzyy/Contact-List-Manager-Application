@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.clmp.entity.AuthRequest;
-import com.example.clmp.entity.User;
 import com.example.clmp.service.CustomUserDetailsService;
 import com.example.clmp.util.JwtUtil;
 

@@ -9,7 +9,6 @@ import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
 import com.example.clmp.dto.ContactDTO;
-import com.example.clmp.entity.AuthRequest;
 import com.example.clmp.exception.ContactNotFoundException;
 import com.example.clmp.exception.ContactNotValidException;
 
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,11 +37,6 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     //Rate limiting. API should allow only 50 request in a minute
     //This can be used in pricing plan for each API client

@@ -5,21 +5,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.example.clmp.entity.User;
 import com.example.clmp.repo.UserRepo;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 @Service
@@ -57,7 +52,7 @@ public class JwtUtil {
         User role = userRepo.findByUserName(userDetails.getUsername());
 
         String[] roles = role.getRole().split(",");
-        Set<String> userRoles = new HashSet<>(Arrays.asList(roles));
+
         claims.put("Roles", roles);
 
         return createToken(claims, userDetails.getUsername());

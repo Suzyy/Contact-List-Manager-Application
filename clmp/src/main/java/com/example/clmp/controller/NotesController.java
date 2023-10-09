@@ -1,7 +1,6 @@
 package com.example.clmp.controller;
 
 import com.example.clmp.service.NotesService;
-import com.example.clmp.util.JwtUtil;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -9,15 +8,12 @@ import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
 import com.example.clmp.dto.NotesDTO;
-import com.example.clmp.entity.AuthRequest;
 import com.example.clmp.exception.NotesNotFoundException;
 import com.example.clmp.exception.NotesNotValidException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
