@@ -1,69 +1,55 @@
 package com.example.clmp.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.example.clmp.filter.JwtFilter;
-import com.example.clmp.repo.UserRepo;
-import com.example.clmp.service.CustomUserDetailsService;
-
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+
 
 //enable h2 database console
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
     
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    @Bean
+    //authentication
+    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+        UserDetails admin = User.withUsername("admin1")
+                                .password(encoder.encode("passwordAdmin1"))
+                                .roles("ADMIN")
+                                .build();
 
-    @Autowired
-    private JwtFilter jwtFilter;
+        UserDetails user = User.withUsername("user1")
+                                .password(encoder.encode("password1"))
+                                .roles("USER")
+                                .build();
 
-    //@Override
-    //protected void configure(HttpSecurity httpSecurity) throws Exception {
-    //    httpSecurity.authorizeRequests().antMatchers("/").permitAll().and().authorizeRequests().antMatchers("/console/**").permitAll();
+        return new InMemoryUserDetailsManager(admin, user);
+    }
 
-    //    httpSecurity.csrf().disable();
-    //    httpSecurity.headers().frameOptions().disable();
-    //}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        return http.csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/v1/contacts", "/v1/notes").permitAll()
+                .and()
+                .authorizeHttpRequests().requestMatchers("/v1/**").authenticated()
+                .and().formLogin()
+                .and().build();
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //TODO
-        auth.userDetailsService(userDetailsService);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
-
-    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/authenticate")
-            .permitAll().anyRequest().authenticated()
-            .and().exceptionHandling().and().sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-    }
+    
 }
