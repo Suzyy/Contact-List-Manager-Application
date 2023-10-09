@@ -1,7 +1,6 @@
 package com.example.clmp.controller;
 
 import com.example.clmp.service.NotesService;
-import com.example.clmp.util.JwtUtil;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -9,15 +8,14 @@ import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
 
 import com.example.clmp.dto.NotesDTO;
-import com.example.clmp.entity.AuthRequest;
 import com.example.clmp.exception.NotesNotFoundException;
 import com.example.clmp.exception.NotesNotValidException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/notes")  //Version Controlling: V1 - Can add different versions when needed
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class NotesController {
 
     @Autowired
@@ -45,6 +44,7 @@ public class NotesController {
         this.bucket = Bucket4j.builder().addLimit(limit).build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/getNotesById/{id}")
     public ResponseEntity<NotesDTO> getNotesById(@PathVariable Long id) {
         try {
@@ -57,6 +57,7 @@ public class NotesController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/addNotes")
     public ResponseEntity<NotesDTO> addNotes(@RequestBody NotesDTO notesDTO) {
         System.out.println("Received request body: " + notesDTO.toString());
@@ -70,6 +71,7 @@ public class NotesController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/updateNotesById/{id}")
     public ResponseEntity<NotesDTO> updateNotesById(@PathVariable Long id, @RequestBody NotesDTO newNotesDTO) {
         try {
@@ -82,6 +84,7 @@ public class NotesController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/deleteNotesById/{id}")
     public ResponseEntity<HttpStatus> deleteNotesById(@PathVariable Long id) {
         try {
