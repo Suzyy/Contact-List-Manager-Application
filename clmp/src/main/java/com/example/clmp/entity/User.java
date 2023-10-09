@@ -1,7 +1,10 @@
 package com.example.clmp.entity;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -19,4 +22,6 @@ public class User {
 
     private String userName;
     private String password;
+    private String role;
+
 }

@@ -24,8 +24,8 @@ public class ClmpApplication {
 	@PostConstruct
 	public void initUser() {
 		List<User> users = Stream.of(
-			new User(101, "user1", "password1"),
-			new User(102, "user2", "password2")
+			new User(101, "user1", "password1", "ROLE_ADMIN"),
+			new User(102, "user2", "password2", "ROLE_USER")
 		).collect(Collectors.toList());
 		userRepo.saveAll(users);
 	}

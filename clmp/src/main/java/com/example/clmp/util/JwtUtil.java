@@ -3,17 +3,30 @@ package com.example.clmp.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.example.clmp.entity.User;
+import com.example.clmp.repo.UserRepo;
+
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @Service
 public class JwtUtil {
     
+    @Autowired
+    UserRepo userRepo;
+
     private String secret = "clmpsecret";
 
     public String extractUsername(String token) {
@@ -37,9 +50,16 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        Set<String> userRoles = new HashSet<>();
+
+        User role = userRepo.findByUserName(userDetails.getUsername());
+        userRoles.add(role.getRole().split(","));
+        Object[] roles = role.getRole().split(",");
+        claims.put("Roles", roles);
+
+        return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -52,4 +72,6 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpried(token));
     }
+
+
 }
