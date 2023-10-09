@@ -1,6 +1,8 @@
 package com.example.clmp.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -18,6 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.clmp.repo.ContactRepo;
 import com.example.clmp.dto.ContactDTO;
 import com.example.clmp.entity.Contact;
+import com.example.clmp.exception.ContactNotFoundException;
+import com.example.clmp.exception.ContactNotValidException;
 
 @SpringBootTest
 public class ContactServiceTest {
@@ -68,11 +72,54 @@ public class ContactServiceTest {
 
         Optional<ContactDTO> contactDTO = contactService.getContactById(1L);
 
+        //Verifying contactDTO contains expected contact info
         assertTrue(contactDTO.isPresent());
         assertEquals("Suzy", contactDTO.orElse(null).getFirstName());
         assertEquals("Lee", contactDTO.orElse(null).getLastName());
         assertEquals("suzy@example.com", contactDTO.orElse(null).getEmail());
         assertEquals("123 Yonge St", contactDTO.orElse(null).getAddress());
+    }
+
+    @Test
+    public void testGetContactById_ContactNotFound() {
+
+        when(contactRepo.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(ContactNotFoundException.class, () -> contactService.getContactById(anyLong()));
+    }
+
+    @Test
+    public void testAddContact_DataValid() {
+        
+        ContactDTO mockContactDTO = new ContactDTO();
+        mockContactDTO.setFirstName("Suzy");
+        mockContactDTO.setLastName("Lee");
+        mockContactDTO.setEmail("suzy@example.com");
+
+        //Mocking save() method in repo
+        when(contactRepo.save(any(Contact.class))).thenAnswer(invocation -> {
+            Contact savedContact = invocation.getArgument(0);
+            //Simulating Id generation during save
+            savedContact.setId(1L);
+            return savedContact;
+        });
+
+        ContactDTO savedContactDTO = contactService.addContact(mockContactDTO);
+
+        assertNotNull(savedContactDTO.getId());
+        assertEquals("Suzy", savedContactDTO.getFirstName());
+        assertEquals("Lee", savedContactDTO.getLastName());
+        assertEquals("suzy@example.com", savedContactDTO.getEmail());
+    }
+
+    @Test
+    public void testAddContact_DataInvalid() {
+
+        //Only setting first name and other required fields to null
+        ContactDTO mockContactDTO = new ContactDTO();
+        mockContactDTO.setFirstName("Suzy");;
+
+        assertThrows(ContactNotValidException.class, () -> contactService.addContact(mockContactDTO));
     }
 
 
