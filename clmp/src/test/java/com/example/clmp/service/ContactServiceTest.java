@@ -142,6 +142,7 @@ public class ContactServiceTest {
         newContactDTO.setId(1L);
         newContactDTO.setFirstName("Jay");
         newContactDTO.setLastName("Lee");
+        newContactDTO.setPhoneNumber("111-111-1111");
         newContactDTO.setEmail("jay@example.com");
 
         Optional<ContactDTO> updateContact = contactService.updateContactById(1L, newContactDTO);
@@ -149,6 +150,7 @@ public class ContactServiceTest {
         assertTrue(updateContact.isPresent());
         assertEquals("Jay", updateContact.get().getFirstName());
         assertEquals("Lee", updateContact.get().getLastName());
+        assertEquals("111-111-1111", updateContact.get().getPhoneNumber());
         assertEquals("jay@example.com", updateContact.get().getEmail());
     }
 
@@ -161,11 +163,30 @@ public class ContactServiceTest {
         newContactDTO.setId(1L);
         newContactDTO.setFirstName("Jay");
         newContactDTO.setLastName("Lee");
+        newContactDTO.setPhoneNumber("111-111-1111");
         newContactDTO.setEmail("jay@example.com");
 
         assertThrows(ContactNotFoundException.class, () -> contactService.updateContactById(1L, newContactDTO));
     }
 
+    //deleteContactById
+    @Test
+    public void testDeleteContactById_ContactFound() {
 
+        when(contactRepo.findById(1L)).thenReturn(Optional.of(new Contact()));
+
+        contactService.deleteContactById(1L);
+
+        //Verifying that delete method in the repo was invoced
+        verify(contactRepo, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void testDeleteContactById_ContactNotFound() {
+
+        when(contactRepo.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ContactNotFoundException.class, () -> contactService.deleteContactById(1L));
+    }
 
 }
