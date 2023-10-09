@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.clmp.entity.User;
 import com.example.clmp.repo.UserRepo;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,11 +53,11 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        Set<String> userRoles = new HashSet<>();
 
         User role = userRepo.findByUserName(userDetails.getUsername());
-        userRoles.add(role.getRole().split(","));
-        Object[] roles = role.getRole().split(",");
+
+        String[] roles = role.getRole().split(",");
+        Set<String> userRoles = new HashSet<>(Arrays.asList(roles));
         claims.put("Roles", roles);
 
         return createToken(claims, userDetails.getUsername());

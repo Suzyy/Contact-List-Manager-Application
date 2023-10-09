@@ -16,8 +16,10 @@ import com.example.clmp.exception.ContactNotValidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +34,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/contacts")  //Version Controlling: V1 - Can add different versions when needed
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ContactController {
 
     @Autowired
@@ -51,6 +54,7 @@ public class ContactController {
         this.bucket = Bucket4j.builder().addLimit(limit).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getAllContacts")
     public ResponseEntity<List<ContactDTO>> getAllContacts() {
         try {
@@ -66,6 +70,7 @@ public class ContactController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/getContactById/{id}")
     public ResponseEntity<ContactDTO> getContactById(@PathVariable Long id) {
         try {
@@ -78,6 +83,7 @@ public class ContactController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/addContact")
     public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO contactDTO) {
         System.out.println("Received request body: " + contactDTO.toString());
@@ -91,6 +97,7 @@ public class ContactController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/updateContactById/{id}")
     public ResponseEntity<ContactDTO> updateContactById(@PathVariable Long id, @RequestBody ContactDTO newContactDTO) {
         try {
@@ -103,6 +110,7 @@ public class ContactController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/deleteContactById/{id}")
     public ResponseEntity<HttpStatus> deleteContactById(@PathVariable Long id) {
         try {
