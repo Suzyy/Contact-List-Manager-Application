@@ -47,9 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = service.loadUserByUsername(userName);
 
-            // Debug log to check if user details are fetched
+            //Debug log to check if user details are fetched - this point is not being hit.
             System.out.println("JwtFilter: UserDetails = " + userDetails);
-            
+
             //Validating JWT, if valid, validate userDetails, if userDetails is valid, setting it to securityContext
             if(jwtUtil.validateToken(token, userDetails)) {
                 

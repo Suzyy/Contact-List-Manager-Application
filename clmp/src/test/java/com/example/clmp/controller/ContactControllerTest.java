@@ -35,10 +35,8 @@ public class ContactControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    //@Mock
-    //private ContactRepo contactRepo;
-
-
+    @Mock
+    private ContactRepo contactRepo;
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
