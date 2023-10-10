@@ -17,7 +17,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
 
     //Informing the swagger that we want documentation of type swagger2
-    //DEBUG: "Failed to load API definition"
+    //DEBUG: "Failed to load API definition" when accessing swagger ui
+    //DEBUG: 'In terminal, java.lang.ClassNotFoundException: io.swagger.v3.oas.annotations.media.PatternProperties'
     @Bean
     public Docket postsApi() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
