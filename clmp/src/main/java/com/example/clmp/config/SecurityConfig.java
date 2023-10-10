@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
+    //DESCRIPTION: Declaring URL patterns that are allowed w/o authentication
     private static final String[] AUTH_WHITE_LIST = {
         "/authenticate", 
         "/swagger-ui/**", 
