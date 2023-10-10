@@ -57,8 +57,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/authenticate")
-            .permitAll().anyRequest().authenticated()
+        //Allowing authenticate and swagger endpoints to be hit without authentication.
+        http.csrf().disable().authorizeRequests().antMatchers("/authenticate", "/swagger-ui/**").permitAll() 
+            //Requiring authentication for any other request.
+            .anyRequest().authenticated()
             .and().exceptionHandling().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.example.clmp.entity.User;
 import com.example.clmp.repo.UserRepo;
 
+@EnableWebMvc
 @SpringBootApplication
 @EnableJpaAuditing
 public class ClmpApplication {

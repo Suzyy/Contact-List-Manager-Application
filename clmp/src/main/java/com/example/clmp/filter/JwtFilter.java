@@ -29,6 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        String requestUri = httpServletRequest.getRequestURI();
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
         String token = null;
         String userName = null; 
@@ -44,6 +45,10 @@ public class JwtFilter extends OncePerRequestFilter {
         System.out.println("JwtFilter: Token = " + token);
         System.out.println("JwtFilter: Username = " + userName);
 
+        if (requestUri.startsWith("/swagger-ui/") || requestUri.equals("/swagger-ui.html")) {
+            // Allow access to Swagger UI without token validation
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        }
         //Checking if username is present and if there is no existing authentication in the security context.
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = service.loadUserByUsername(userName);
