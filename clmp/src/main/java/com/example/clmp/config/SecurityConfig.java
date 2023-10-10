@@ -31,17 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
-    //@Override
-    //protected void configure(HttpSecurity httpSecurity) throws Exception {
-    //    httpSecurity.authorizeRequests().antMatchers("/").permitAll().and().authorizeRequests().antMatchers("/console/**").permitAll();
-
-    //    httpSecurity.csrf().disable();
-    //    httpSecurity.headers().frameOptions().disable();
-    //}
+    private static final String[] AUTH_WHITE_LIST = {
+        "/authenticate", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/v2/api-docs"
+    };
 
     @Override
+    //DESCRIPTION: Configuring the authmangerBuilder to use (custom)userDetailsService for authentication
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //TODO
         auth.userDetailsService(userDetailsService);
     }
 
@@ -57,14 +53,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    //DESCRIPTION: Configuring security for HTTP requests
     protected void configure(HttpSecurity http) throws Exception {
         //Allowing authenticate and swagger endpoints to be hit without authentication.
-        http.csrf().disable().authorizeRequests().antMatchers("/authenticate", "/swagger-ui/**", "/v3/api-docs/**").permitAll() 
+        http.csrf().disable().authorizeRequests().antMatchers(AUTH_WHITE_LIST).permitAll() 
             //Requiring authentication for any other request.
             .anyRequest().authenticated()
             .and().exceptionHandling().and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        //Adding custom jwtFilter before the default spring security authentication filter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

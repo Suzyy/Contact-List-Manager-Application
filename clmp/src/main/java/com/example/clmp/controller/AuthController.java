@@ -27,6 +27,7 @@ public class AuthController {
     private CustomUserDetailsService userDetailsService;
 
     @PostMapping("/authenticate")
+    //This method takes in username and password and if authentication is valid, returns jwt token
     public ResponseEntity<String> generateToken(@RequestBody AuthRequest authRequest) throws Exception {
 
         try {

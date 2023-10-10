@@ -20,17 +20,16 @@ public class SwaggerConfig {
     //DEBUG: "Failed to load API definition"
     @Bean
     public Docket postsApi() {
-        return new Docket(DocumentationType.SWAGGER_2).groupName("CLMP").apiInfo(apiInfo()).select()
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
             .apis(RequestHandlerSelectors.basePackage("com.example.clmp.controller"))
             .paths(PathSelectors.any()).build();
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("Contact Service")
-            .description("Contact API Documentation Generated Using Swagger2 for our REST API")
+        return new ApiInfoBuilder().title("Contact List Management Application")
+            .description("API Documentation Generated Using Swagger2 for our REST API")
             .termsOfServiceUrl("https://github.com/Suzyy/Contact-List-Manager-Application")
             .license("Suzy_Lee License")
             .licenseUrl("https://github.com/Suzyy/Contact-List-Manager-Application").version("1.0").build();
     }
-    
 }
