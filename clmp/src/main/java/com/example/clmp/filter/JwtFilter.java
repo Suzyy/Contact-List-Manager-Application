@@ -38,9 +38,18 @@ public class JwtFilter extends OncePerRequestFilter {
             token = authorizationHeader.substring(7);
             userName = jwtUtil.extractUsername(token);
         }
+
+        // Debug log to check if the filter is invoked and token is extracted
+        System.out.println("JwtFilter: Authorization Header = " + authorizationHeader);
+        System.out.println("JwtFilter: Token = " + token);
+        System.out.println("JwtFilter: Username = " + userName);
+
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = service.loadUserByUsername(userName);
 
+            // Debug log to check if user details are fetched
+            System.out.println("JwtFilter: UserDetails = " + userDetails);
+            
             //Validating JWT, if valid, validate userDetails, if userDetails is valid, setting it to securityContext
             if(jwtUtil.validateToken(token, userDetails)) {
                 

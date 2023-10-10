@@ -6,17 +6,22 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.example.clmp.dto.ContactDTO;
 import com.example.clmp.entity.User;
+import com.example.clmp.filter.JwtFilter;
 import com.example.clmp.repo.ContactRepo;
 import com.example.clmp.repo.UserRepo;
 import com.example.clmp.service.ContactService;
@@ -30,8 +35,10 @@ public class ContactControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ContactService contactService;
+    //@Mock
+    //private ContactRepo contactRepo;
+
+
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -39,8 +46,16 @@ public class ContactControllerTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired JwtFilter jwtFilter;
+
     @Autowired
     private UserRepo userRepo;
+
+    @Mock
+    private ContactService contactService;
+
+    @InjectMocks
+    private ContactController contactController;
 
     @BeforeEach
     public void setUp() {
@@ -48,8 +63,10 @@ public class ContactControllerTest {
         userRepo.save(new User(2, "user", "password", "ROLE_USER"));
     }
 
+    
     @Test
-    @WithUserDetails("admin")
+    //@WithUserDetails("admin")
+    @WithMockUser(username = "admin", password = "password", roles = {"ADMIN"})
     public void testGetAllContacts() throws Exception {
         //Generating jwt token
         UserDetails userDetails = userDetailsService.loadUserByUsername("admin");
@@ -74,11 +91,37 @@ public class ContactControllerTest {
         List<ContactDTO> contactList = List.of(
             contactDTO_1, contactDTO_2
         );
+        System.out.println("Contact List: " + contactList);
+        //DEBUG: contact list is not empty but contactService.getAllContacts() is returning an empty list.
         when(contactService.getAllContacts()).thenReturn(contactList);
 
         //GET request to the endpoint w/ generated jwt token in the 'Authorization' header.
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/v1/contacts/getAllContacts")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer " + token))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(contactList.size()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].id").value(contactList.get(0).getId()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].firstName").value(contactList.get(0).getFirstName()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].lastName").value(contactList.get(0).getLastName()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].phoneNumber").value(contactList.get(0).getPhoneNumber()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].email").value(contactList.get(0).getEmail()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[0].address").value(contactList.get(0).getAddress()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].id").value(contactList.get(1).getId()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].firstName").value(contactList.get(1).getFirstName()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].lastName").value(contactList.get(1).getLastName()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].phoneNumber").value(contactList.get(1).getPhoneNumber()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].email").value(contactList.get(1).getEmail()))
+            .andExpect(MockMvcResultMatchers.jsonPath("[1].address").value(contactList.get(1).getAddress())) 
+            .andReturn();
+
+        //DEBUG: Response is empty. Seems like contactService.getAllContacts is not invoked correctly.
+        System.out.println("RESULT: "+ result.getResponse().getContentAsString());
         
-    }
+        verify(contactService).getAllContacts();
+
+    } 
 
 
 }
