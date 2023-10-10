@@ -21,9 +21,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
-    //Informing the swagger that we want documentation of type swagger2
-    //DEBUG: "Whitelabel Error Page" in localhost:9090/swagger-ui/index.html
-    //DEBUG: No mapping for GET /swagger-ui/index.html in terminal
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30).apiInfo(apiInfo())
@@ -36,7 +33,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("Contact List Management Application")
-            .description("API Documentation Generated Using Swagger2 for our REST API")
+            .description("API Documentation for Contact List Management Application REST API")
             .termsOfServiceUrl("https://github.com/Suzyy/Contact-List-Manager-Application")
             .license("Suzy_Lee License")
             .licenseUrl("https://github.com/Suzyy/Contact-List-Manager-Application").version("1.0").build();
