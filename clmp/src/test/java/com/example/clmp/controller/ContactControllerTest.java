@@ -1,6 +1,7 @@
 package com.example.clmp.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -35,8 +36,8 @@ public class ContactControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private ContactRepo contactRepo;
+    //@Mock
+    //private ContactRepo contactRepo;
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -121,5 +122,31 @@ public class ContactControllerTest {
 
     } 
 
+    @Test
+    public void testGetContactById() throws Exception {
+        // Generate a JWT token for the "admin" user
+        UserDetails userDetails = userDetailsService.loadUserByUsername("admin");
+        String token = jwtUtil.generateToken(userDetails);
+
+        ContactDTO mockContact = new ContactDTO();
+        mockContact.setId(1L);
+        mockContact.setFirstName("Suzy");
+        mockContact.setLastName("Lee");
+        mockContact.setPhoneNumber("000-000-0000");
+        mockContact.setEmail("suzy@example.com");
+        mockContact.setAddress("123 Yonge St");
+
+        when(contactService.getContactById(1L)).thenReturn(Optional.of(mockContact));
+
+        Long contactId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/getContactById/{id}", contactId)
+                .header("Authorization", "Bearer " + token) // Add the JWT token to the request header
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(contactId))
+                // Add more assertions for other fields in the ContactDTO if needed
+                .andReturn();
+    }
 
 }
