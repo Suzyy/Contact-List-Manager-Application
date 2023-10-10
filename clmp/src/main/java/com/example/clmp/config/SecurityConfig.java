@@ -32,7 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtFilter jwtFilter;
 
     private static final String[] AUTH_WHITE_LIST = {
-        "/authenticate", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/v2/api-docs"
+        "/authenticate", 
+        "/swagger-ui/**", 
+        "/v3/api-docs/**", 
+        "/swagger-resources/**", 
+        "/webjars/**"
     };
 
     @Override
@@ -56,7 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //DESCRIPTION: Configuring security for HTTP requests
     protected void configure(HttpSecurity http) throws Exception {
         //Allowing authenticate and swagger endpoints to be hit without authentication.
-        http.csrf().disable().authorizeRequests().antMatchers(AUTH_WHITE_LIST).permitAll() 
+        http.cors().and().csrf().disable().headers().frameOptions().deny().and()
+            .authorizeRequests().antMatchers(AUTH_WHITE_LIST).permitAll() 
             //Requiring authentication for any other request.
             .anyRequest().authenticated()
             .and().exceptionHandling().and().sessionManagement()
