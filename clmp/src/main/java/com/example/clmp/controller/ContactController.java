@@ -37,6 +37,7 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
 
+    @Autowired
     private TopicProducerService topicProducerService;
 
     //Rate limiting. API should allow only 50 request in a minute
@@ -87,7 +88,7 @@ public class ContactController {
         try {
             ContactDTO contactObj = contactService.addContact(contactDTO);
             //Sending message to kafka topic
-            topicProducerService.send("Contact has been added to the contact list.");
+            //topicProducerService.send("Contact has been added to the contact list.");
             return new ResponseEntity<>(contactObj, HttpStatus.OK);
         } catch (ContactNotValidException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -102,7 +103,7 @@ public class ContactController {
         try {
             Optional<ContactDTO> updatedContactDTOData = contactService.updateContactById(id, newContactDTO);
             //Sending message to kafka topic
-            topicProducerService.send("Contact has been updated in the contact list.");
+            //topicProducerService.send("Contact has been updated in the contact list.");
             return new ResponseEntity<>(updatedContactDTOData.get(), HttpStatus.OK);
         } catch (ContactNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
