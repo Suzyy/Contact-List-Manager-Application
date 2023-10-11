@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TopicProducerService {
+public class TopicProducer {
     
     @org.springframework.beans.factory.annotation.Value("${topic.name.producer}")
     private String topicName;

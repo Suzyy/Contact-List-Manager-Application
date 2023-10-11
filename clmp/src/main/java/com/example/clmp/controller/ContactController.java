@@ -1,7 +1,7 @@
 package com.example.clmp.controller;
 
 import com.example.clmp.service.ContactService;
-import com.example.clmp.service.TopicProducerService;
+import com.example.clmp.service.TopicProducer;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -38,7 +38,7 @@ public class ContactController {
     private ContactService contactService;
 
     @Autowired
-    private TopicProducerService topicProducerService;
+    private TopicProducer topicProducer;
 
     //Rate limiting. API should allow only 50 request in a minute
     //This can be used in pricing plan for each API client
@@ -88,7 +88,7 @@ public class ContactController {
         try {
             ContactDTO contactObj = contactService.addContact(contactDTO);
             //Sending message to kafka topic
-            //topicProducerService.send("Contact has been added to the contact list.");
+            //topicProducer.send("Contact has been added to the contact list.");
             return new ResponseEntity<>(contactObj, HttpStatus.OK);
         } catch (ContactNotValidException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -103,7 +103,7 @@ public class ContactController {
         try {
             Optional<ContactDTO> updatedContactDTOData = contactService.updateContactById(id, newContactDTO);
             //Sending message to kafka topic
-            //topicProducerService.send("Contact has been updated in the contact list.");
+            //topicProducer.send("Contact has been updated in the contact list.");
             return new ResponseEntity<>(updatedContactDTOData.get(), HttpStatus.OK);
         } catch (ContactNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
