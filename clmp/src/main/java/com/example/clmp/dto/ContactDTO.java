@@ -1,5 +1,6 @@
 package com.example.clmp.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.Email;
@@ -12,7 +13,7 @@ import lombok.*;
 
 @Setter
 @Getter
-public class ContactDTO {
+public class ContactDTO implements Serializable{
     private Long id;
 
     @NotBlank(message =  "First name is a required field")

@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,6 +20,7 @@ import com.example.clmp.exception.ContactNotValidException;
 
 @Service
 @Validated
+//@CacheConfig(cacheNames = {"ContactDTO"})
 public class ContactService {
 
     @Autowired
@@ -30,6 +34,7 @@ public class ContactService {
     }
 
     //DESCRIPTION: Getting contact by specific contact id
+    //@Cacheable(key = "#id")
     public Optional<ContactDTO> getContactById(Long id) {
         Optional<Contact> contactData = contactRepo.findById(id);
 
