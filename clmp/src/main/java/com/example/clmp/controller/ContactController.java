@@ -49,6 +49,9 @@ public class ContactController {
     @GetMapping("/getAllContacts")
     public ResponseEntity<List<ContactDTO>> getAllContacts() {
         try {
+            //Debug
+            //System.out.println("Got into Controller::::");
+            
             List<ContactDTO> contactDTOList = contactService.getAllContacts();
 
             if (contactDTOList.isEmpty()) {
